@@ -7,8 +7,7 @@
                 <h2>Create New User</h2>
             </div>
             <div class="pull-right">
-                <a class="btn btn-primary btn-sm mb-2" href="{{ route('users.index') }}"><i class="fa fa-arrow-left"></i>
-                    Back</a>
+                <a class="btn btn-primary btn-sm mb-2" href="{{ route('users.index') }}"><i class="fa fa-arrow-left"></i> Back</a>
             </div>
         </div>
     </div>
@@ -53,22 +52,16 @@
             </div>
             <div class="col-xs-12 col-sm-12 col-md-12">
                 <div class="form-group">
-                    <strong>Role:</strong>
-                    <select name="roles[]" class="form-control" multiple="multiple">
-                        @foreach ($roles as $value => $label)
-                            <option value="{{ $value }}">
-                                {{ $label }}
-                            </option>
-                        @endforeach
-                    </select>
+                    <strong>Role:</strong><br>
+                    <label><input type="checkbox" name="roles[]" value="user"> User</label>
+                    <label><input type="checkbox" name="roles[]" value="admin"> Admin</label>
                 </div>
             </div>
             <div class="col-xs-12 col-sm-12 col-md-12 text-center">
-                <button type="submit" class="btn btn-primary btn-sm mt-2 mb-3"><i class="fa-solid fa-floppy-disk"></i>
-                    Submit</button>
+                <button type="submit" class="btn btn-primary btn-sm mt-2 mb-3"><i class="fa-solid fa-floppy-disk"></i> Submit</button>
             </div>
         </div>
     </form>
 
-    <p class="text-center text-primary"><small>Tutorial by ItSolutionStuff.com</small></p>
+    <p class="text-center text-primary"><small>TechnozMan Solution</small></p>
 @endsection

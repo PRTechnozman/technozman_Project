@@ -45,24 +45,44 @@ class UserController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    // public function store(Request $request): RedirectResponse
+    // {
+    //     $this->validate($request, [
+    //         'name' => 'required',
+    //         'email' => 'required|email|unique:users,email',
+    //         'password' => 'required|same:confirm-password',
+    //         'roles' => 'required'
+    //     ]);
+
+    //     $input = $request->all();
+    //     $input['password'] = Hash::make($input['password']);
+
+    //     $user = User::create($input);
+    //     $user->assignRole($request->input('roles'));
+
+    //     return redirect()->route('users.index')
+    //         ->with('success', 'User created successfully');
+    // }
+
     public function store(Request $request): RedirectResponse
-    {
-        $this->validate($request, [
-            'name' => 'required',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|same:confirm-password',
-            'roles' => 'required'
-        ]);
+{
+    $this->validate($request, [
+        'name' => 'required',
+        'email' => 'required|email|unique:users,email',
+        'password' => 'required|same:confirm-password',
+        'roles' => 'required|array', // Ensure it's an array
+    ]);
 
-        $input = $request->all();
-        $input['password'] = Hash::make($input['password']);
+    $input = $request->all();
+    $input['password'] = Hash::make($input['password']);
 
-        $user = User::create($input);
-        $user->assignRole($request->input('roles'));
+    $user = User::create($input);
+    $user->assignRole($request->input('roles')); // Assign multiple roles
 
-        return redirect()->route('users.index')
-            ->with('success', 'User created successfully');
-    }
+    return redirect()->route('users.index')
+        ->with('success', 'User created successfully');
+}
+
 
     /**
      * Display the specified resource.
@@ -99,31 +119,58 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+    // public function update(Request $request, $id): RedirectResponse
+    // {
+    //     $this->validate($request, [
+    //         'name' => 'required',
+    //         'email' => 'required|email|unique:users,email,' . $id,
+    //         'password' => 'same:confirm-password',
+    //         'roles' => 'required'
+    //     ]);
+
+    //     $input = $request->all();
+    //     if (!empty($input['password'])) {
+    //         $input['password'] = Hash::make($input['password']);
+    //     } else {
+    //         $input = Arr::except($input, array('password'));
+    //     }
+
+    //     $user = User::find($id);
+    //     $user->update($input);
+    //     DB::table('model_has_roles')->where('model_id', $id)->delete();
+
+    //     $user->assignRole($request->input('roles'));
+
+    //     return redirect()->route('users.index')
+    //         ->with('success', 'User updated successfully');
+    // }
+
     public function update(Request $request, $id): RedirectResponse
     {
-        $this->validate($request, [
-            'name' => 'required',
-            'email' => 'required|email|unique:users,email,' . $id,
-            'password' => 'same:confirm-password',
-            'roles' => 'required'
-        ]);
+    $this->validate($request, [
+        'name' => 'required',
+        'email' => 'required|email|unique:users,email,' . $id,
+        'password' => 'nullable|same:confirm-password',
+        'roles' => 'required|array', // Ensure it's an array
+    ]);
 
-        $input = $request->all();
-        if (!empty($input['password'])) {
-            $input['password'] = Hash::make($input['password']);
-        } else {
-            $input = Arr::except($input, array('password'));
-        }
-
-        $user = User::find($id);
-        $user->update($input);
-        DB::table('model_has_roles')->where('model_id', $id)->delete();
-
-        $user->assignRole($request->input('roles'));
-
-        return redirect()->route('users.index')
-            ->with('success', 'User updated successfully');
+    $input = $request->all();
+    if (!empty($input['password'])) {
+        $input['password'] = Hash::make($input['password']);
+    } else {
+        $input = Arr::except($input, array('password'));
     }
+
+    $user = User::find($id);
+    $user->update($input);
+
+    // Remove existing roles and assign new ones
+    $user->syncRoles($request->input('roles'));
+
+    return redirect()->route('users.index')
+        ->with('success', 'User updated successfully');
+}
+
 
     /**
      * Remove the specified resource from storage.

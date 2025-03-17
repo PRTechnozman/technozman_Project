@@ -56,25 +56,41 @@ class RoleController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    // public function store(Request $request): RedirectResponse
+    // {
+    //     $this->validate($request, [
+    //         'name' => 'required|unique:roles,name',
+    //         'permission' => 'required',
+    //     ]);
+
+    //     $permissionsID = array_map(
+    //         function ($value) {
+    //             return (int)$value;
+    //         },
+    //         $request->input('permission')
+    //     );
+
+    //     $role = Role::create(['name' => $request->input('name')]);
+    //     $role->syncPermissions($permissionsID);
+
+    //     return redirect()->route('roles.index')
+    //         ->with('success', 'Role created successfully');
+    // }
     public function store(Request $request): RedirectResponse
     {
-        $this->validate($request, [
-            'name' => 'required|unique:roles,name',
-            'permission' => 'required',
-        ]);
+    $this->validate($request, [
+        'name' => 'required|unique:roles,name',
+    ]);
 
-        $permissionsID = array_map(
-            function ($value) {
-                return (int)$value;
-            },
-            $request->input('permission')
-        );
+    $role = Role::create(['name' => $request->input('name')]);
 
-        $role = Role::create(['name' => $request->input('name')]);
+    if ($request->has('permission')) {
+        $permissionsID = array_map(fn($value) => (int)$value, $request->input('permission'));
         $role->syncPermissions($permissionsID);
+    }
 
-        return redirect()->route('roles.index')
-            ->with('success', 'Role created successfully');
+    return redirect()->route('roles.index')
+        ->with('success', 'Role created successfully');
     }
     /**
      * Display the specified resource.
@@ -116,28 +132,46 @@ class RoleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+    // public function update(Request $request, $id): RedirectResponse
+    // {
+    //     $this->validate($request, [
+    //         'name' => 'required',
+    //         'permission' => 'required',
+    //     ]);
+
+    //     $role = Role::find($id);
+    //     $role->name = $request->input('name');
+    //     $role->save();
+
+    //     $permissionsID = array_map(
+    //         function ($value) {
+    //             return (int)$value;
+    //         },
+    //         $request->input('permission')
+    //     );
+
+    //     $role->syncPermissions($permissionsID);
+
+    //     return redirect()->route('roles.index')
+    //         ->with('success', 'Role updated successfully');
+    // }
     public function update(Request $request, $id): RedirectResponse
     {
-        $this->validate($request, [
-            'name' => 'required',
-            'permission' => 'required',
-        ]);
+    $this->validate($request, [
+        'name' => 'required',
+    ]);
 
-        $role = Role::find($id);
-        $role->name = $request->input('name');
-        $role->save();
+    $role = Role::find($id);
+    $role->name = $request->input('name');
+    $role->save();
 
-        $permissionsID = array_map(
-            function ($value) {
-                return (int)$value;
-            },
-            $request->input('permission')
-        );
-
+    if ($request->has('permission')) {
+        $permissionsID = array_map(fn($value) => (int)$value, $request->input('permission'));
         $role->syncPermissions($permissionsID);
+    }
 
-        return redirect()->route('roles.index')
-            ->with('success', 'Role updated successfully');
+    return redirect()->route('roles.index')
+        ->with('success', 'Role updated successfully');
     }
     /**
      * Remove the specified resource from storage.
